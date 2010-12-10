@@ -126,19 +126,19 @@ public class Tree extends List
 	//
 	//--------------------------------------------------------------------------
 	
-	[Embed("disclosureOpenIcon.png")]
+	[Embed("../../../assets/disclosureOpenIcon.png")]
 	private var disclosureOpenIcon:Class;
 	
-	[Embed("disclosureClosedIcon.png")]
+	[Embed("../../../assets/disclosureClosedIcon.png")]
 	private var disclosureClosedIcon:Class;
 	
-	[Embed("folderOpenIcon.png")]
+	[Embed("../../../assets/folderOpenIcon.png")]
 	private var folderOpenIcon:Class;
 	
-	[Embed("folderClosedIcon.png")]
+	[Embed("../../../assets/folderClosedIcon.png")]
 	private var folderClosedIcon:Class;
 	
-	[Embed("defaultLeafIcon.png")]
+	[Embed("../../../assets/defaultLeafIcon.png")]
 	private var defaultLeafIcon:Class;
 	
 	private var refreshRenderersCalled:Boolean = false;
