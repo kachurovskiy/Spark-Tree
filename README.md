@@ -1,1 +1,1 @@
-List based Tree component for Flex 4.
+Flex 4 Tree component based on Spark List.
