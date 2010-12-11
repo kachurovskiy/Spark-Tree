@@ -128,16 +128,16 @@ public class Tree extends List
 	
 	[Embed("../../../assets/disclosureOpenIcon.png")]
 	private var disclosureOpenIcon:Class;
-	
+
 	[Embed("../../../assets/disclosureClosedIcon.png")]
 	private var disclosureClosedIcon:Class;
-	
+
 	[Embed("../../../assets/folderOpenIcon.png")]
 	private var folderOpenIcon:Class;
-	
+
 	[Embed("../../../assets/folderClosedIcon.png")]
 	private var folderClosedIcon:Class;
-	
+
 	[Embed("../../../assets/defaultLeafIcon.png")]
 	private var defaultLeafIcon:Class;
 	
