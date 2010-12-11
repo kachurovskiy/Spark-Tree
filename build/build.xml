@@ -1,0 +1,36 @@
+<project name="Spark Tree" basedir="../" default="compile">
+
+	<property file="${basedir}/build/build.properties" />
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+	<target name="clean" description="Removes the build directory">
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${build.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="init">
+		<echo message="Using Flex SDK from: ${FLEX_HOME}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="init" description="Compiles SWC into build directory">
+		<compc output="${build.dir}/${swc.name}">
+			<source-path path-element="${source.dir}" />
+			<source-path path-element="${assets.dir}" />
+			<include-sources dir="${source.dir}">
+				<include name="**/*.as" />
+				<include name="**/*.mxml" />
+			</include-sources>
+			<!-- Configure the flex framework libraries as external link dependencies -->
+			<external-library-path dir="${FLEX_HOME}/frameworks" append="true">
+				<include name="libs" />
+				<include name="locale/{locale}" />
+			</external-library-path>
+			<headless-server>true</headless-server>
+		</compc>
+	</target>
+
+</project>
