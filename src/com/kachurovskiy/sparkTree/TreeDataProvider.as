@@ -18,7 +18,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. */
 
-package com.sparkTree
+package com.kachurovskiy.sparkTree
 {
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
@@ -40,17 +40,17 @@ import mx.events.PropertyChangeEventKind;
 /**
  *  Dispatched when a branch is closed or collapsed.
  */
-[Event(name="itemClose", type="TreeEvent")]
+[Event(name="itemClose", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch is opened or expanded.
  */
-[Event(name="itemOpen", type="TreeEvent")]
+[Event(name="itemOpen", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch open or close is initiated.
  */
-[Event(name="itemOpening", type="TreeEvent")]
+[Event(name="itemOpening", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 /**
  * Special implementation of <code>IList</code> that server as a 

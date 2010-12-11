@@ -1,4 +1,4 @@
-package com.sparkTree
+package com.kachurovskiy.sparkTree
 {
 import flash.events.Event;
 

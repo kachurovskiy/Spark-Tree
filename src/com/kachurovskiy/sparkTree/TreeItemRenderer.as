@@ -1,4 +1,4 @@
-package com.sparkTree
+package com.kachurovskiy.sparkTree
 {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

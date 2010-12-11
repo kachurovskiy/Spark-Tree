@@ -1,4 +1,4 @@
-package com.sparkTree
+package com.kachurovskiy.sparkTree
 {
 import flash.events.Event;
 
@@ -19,17 +19,17 @@ import spark.components.List;
 /**
  *  Dispatched when a branch is closed or collapsed.
  */
-[Event(name="itemClose", type="com.sparkTree.TreeEvent")]
+[Event(name="itemClose", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch is opened or expanded.
  */
-[Event(name="itemOpen", type="com.sparkTree.TreeEvent")]
+[Event(name="itemOpen", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch open or close is initiated.
  */
-[Event(name="itemOpening", type="com.sparkTree.TreeEvent")]
+[Event(name="itemOpening", type="com.kachurovskiy.sparkTree.TreeEvent")]
 
 //--------------------------------------
 //  Styles
@@ -126,19 +126,19 @@ public class Tree extends List
 	//
 	//--------------------------------------------------------------------------
 	
-	[Embed("../../../assets/disclosureOpenIcon.png")]
+	[Embed("../../../../assets/disclosureOpenIcon.png")]
 	private var disclosureOpenIcon:Class;
 
-	[Embed("../../../assets/disclosureClosedIcon.png")]
+	[Embed("../../../../assets/disclosureClosedIcon.png")]
 	private var disclosureClosedIcon:Class;
 
-	[Embed("../../../assets/folderOpenIcon.png")]
+	[Embed("../../../../assets/folderOpenIcon.png")]
 	private var folderOpenIcon:Class;
 
-	[Embed("../../../assets/folderClosedIcon.png")]
+	[Embed("../../../../assets/folderClosedIcon.png")]
 	private var folderClosedIcon:Class;
 
-	[Embed("../../../assets/defaultLeafIcon.png")]
+	[Embed("../../../../assets/defaultLeafIcon.png")]
 	private var defaultLeafIcon:Class;
 	
 	private var refreshRenderersCalled:Boolean = false;
