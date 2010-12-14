@@ -143,6 +143,8 @@ public class Tree extends List
 	
 	private var refreshRenderersCalled:Boolean = false;
 	
+	private var renderersToRefresh:Vector.<ITreeItemRenderer> = new Vector.<ITreeItemRenderer>();
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Properties
@@ -361,17 +363,32 @@ public class Tree extends List
 	{
 		super.updateDisplayList(unscaledWidth, unscaledHeight);
 		
+		// refresh all renderers or only some of them
+		var n:int;
+		var i:int;
+		var renderer:ITreeItemRenderer;
 		if (refreshRenderersCalled)
 		{
 			refreshRenderersCalled = false;
-			var n:int = dataGroup.numElements;
-			for (var i:int = 0; i < n; i++)
+			n = dataGroup.numElements;
+			for (i = 0; i < n; i++)
 			{
-				var renderer:ITreeItemRenderer = dataGroup.getElementAt(i) as ITreeItemRenderer;
+				renderer = dataGroup.getElementAt(i) as ITreeItemRenderer;
 				if (renderer)
 					updateRenderer(renderer, renderer.itemIndex, renderer.data);
 			}
 		}
+		else if (renderersToRefresh.length > 0)
+		{
+			n = renderersToRefresh.length;
+			for (i = 0; i < n; i++)
+			{
+				renderer = renderersToRefresh[i];
+				updateRenderer(renderer, renderer.itemIndex, renderer.data);
+			}
+		}
+		if (renderersToRefresh.length > 0)
+			renderersToRefresh.splice(0, renderersToRefresh.length);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -430,6 +447,12 @@ public class Tree extends List
 	public function refreshRenderers():void
 	{
 		refreshRenderersCalled = true;
+		invalidateDisplayList();
+	}
+	
+	public function refreshRenderer(renderer:ITreeItemRenderer):void
+	{
+		renderersToRefresh.push(renderer);
 		invalidateDisplayList();
 	}
 	

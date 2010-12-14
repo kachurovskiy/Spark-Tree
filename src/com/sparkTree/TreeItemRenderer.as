@@ -1,13 +1,25 @@
 package com.sparkTree
 {
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.events.Event;
+import flash.events.IEventDispatcher;
 
+import mx.collections.ICollectionView;
+import mx.events.CollectionEvent;
+import mx.events.CollectionEventKind;
+import mx.events.PropertyChangeEvent;
 import mx.styles.IStyleClient;
 
 import spark.components.supportClasses.ItemRenderer;
 
+/**
+ * Base class for all Spark Tree item renderers. Provides various properties
+ * that can be used in descendant's UI.
+ * 
+ * <p>Watches the <code>data</code> children collection for modifications
+ * <a href="https://github.com/kachurovskiy/Spark-Tree/issues#issue/2">and 
+ * updates renderer when it changes</a>.</p>
+ */
 public class TreeItemRenderer extends ItemRenderer implements ITreeItemRenderer
 {
 	
@@ -31,6 +43,32 @@ public class TreeItemRenderer extends ItemRenderer implements ITreeItemRenderer
 	//--------------------------------------------------------------------------
 	
 	private var tree:Tree;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Overriden properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  data
+	//----------------------------------
+
+	override public function set data(value:Object):void
+	{
+		var eventDispatcher:IEventDispatcher = super.data as IEventDispatcher;
+		if (eventDispatcher)
+			eventDispatcher.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,
+				data_propertyChangeHandler);
+		
+		super.data = value;
+		updateChildren();
+		
+		eventDispatcher = value as IEventDispatcher;
+		if (eventDispatcher)
+			eventDispatcher.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,
+				data_propertyChangeHandler);
+	}
 	
 	//--------------------------------------------------------------------------
 	//
@@ -237,6 +275,35 @@ public class TreeItemRenderer extends ItemRenderer implements ITreeItemRenderer
 	
 	//--------------------------------------------------------------------------
 	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+
+	protected var _children:ICollectionView;
+	
+	public function get children():ICollectionView
+	{
+		return _children;
+	}
+	
+	public function set children(value:ICollectionView):void
+	{
+		if (_children == value)
+			return;
+		
+		if (_children)
+			_children.removeEventListener(CollectionEvent.COLLECTION_CHANGE,
+				children_collectionChange);
+		
+		_children = value;
+		
+		if (_children)
+			_children.addEventListener(CollectionEvent.COLLECTION_CHANGE,
+				children_collectionChange);
+	}
+	
+	//--------------------------------------------------------------------------
+	//
 	//  Overriden methods
 	//
 	//--------------------------------------------------------------------------
@@ -276,6 +343,18 @@ public class TreeItemRenderer extends ItemRenderer implements ITreeItemRenderer
 			return getStyle("color");
 	}
 	
+	private function updateChildren():void
+	{
+		children = data && tree && tree.dataDescriptor ? 
+			tree.dataDescriptor.getChildren(data) : null;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Event handlers
+	//
+	//--------------------------------------------------------------------------
+
 	private function addedToStage(event:Event):void
 	{
 		var container:DisplayObjectContainer = owner;
@@ -284,6 +363,18 @@ public class TreeItemRenderer extends ItemRenderer implements ITreeItemRenderer
 			container = container.parent;
 		}
 		tree = Tree(container);
+		updateChildren();
+	}
+	
+	private function children_collectionChange(event:CollectionEvent):void
+	{
+		if (event.kind != CollectionEventKind.UPDATE)
+			tree.refreshRenderer(this);
+	}
+
+	private function data_propertyChangeHandler(event:PropertyChangeEvent):void
+	{
+		updateChildren();
 	}
 	
 }
