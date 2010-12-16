@@ -96,12 +96,22 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 	
 	public function addItem(item:Object):void
 	{
-		throw error;
+		_dataProvider.addItem(item);
 	}
 	
 	public function addItemAt(item:Object, index:int):void
 	{
-		throw error;
+		if (index == 0)
+		{
+			_dataProvider.addItemAt(item, 0);
+			return;
+		}
+		
+		var previousItem:Object = getItemAt(index - 1);
+		var parent:Object = getItemParent(previousItem);
+		var branch:IList = parent ? IList(dataDescriptor.getChildren(parent)) : _dataProvider;
+		var localIndex:int = branch.getItemIndex(previousItem);
+		branch.addItemAt(item, localIndex + 1);
 	}
 	
 	public function getItemAt(index:int, prefetch:int=0):Object
@@ -226,24 +236,42 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		return -1;
 	}
 	
-	public function itemUpdated(item:Object, property:Object=null, oldValue:Object=null, newValue:Object=null):void
+	public function itemUpdated(item:Object, property:Object = null, 
+		oldValue:Object = null, newValue:Object = null):void
 	{
-		throw error;
+		var parent:Object = getItemParent(item);
+		var branch:IList = parent ? IList(dataDescriptor.getChildren(parent)) : _dataProvider;
+		_dataProvider.itemUpdated(item, property, oldValue, newValue);
 	}
 	
 	public function removeAll():void
 	{
-		throw error;
+		_dataProvider.removeAll();
 	}
 	
 	public function removeItemAt(index:int):Object
 	{
-		throw error;
+		var item:Object = getItemAt(index);
+		for (var p:* in openedBranchesToParentObjects)
+		{
+			var branch:IList = IList(p);
+			var n:int = branch.length;
+			for (var i:int = 0; i < n; i++)
+			{
+				if (branch[i] == item)
+					return branch.removeItemAt(i);
+			}
+		}
+		return null;
 	}
 	
 	public function setItemAt(item:Object, index:int):Object
 	{
-		throw error;
+		var currentItem:Object = getItemAt(index);
+		var parent:Object = getItemParent(currentItem);
+		var branch:IList = parent ? IList(dataDescriptor.getChildren(parent)) : _dataProvider;
+		var localIndex:int = branch.getItemIndex(currentItem);
+		return branch.setItemAt(item, localIndex)
 	}
 	
 	public function toArray():Array
@@ -344,8 +372,6 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 	//  Variables
 	//
 	//--------------------------------------------------------------------------
-
-	private var error:Error = new Error("modifications should be done in source collection");
 
 	private var openedBranchesToParentObjects:Dictionary;
 	
@@ -660,7 +686,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			for (var i:int = 0; i < n; i++)
 			{
 				if (branch[i] == item)
-					return openedBranchesToParentObjects[p];
+					return openedBranchesToParentObjects[branch];
 			}
 		}
 		return null;
