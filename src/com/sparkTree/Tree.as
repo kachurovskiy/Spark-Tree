@@ -1,6 +1,8 @@
 package com.sparkTree
 {
 import flash.events.Event;
+import flash.events.KeyboardEvent;
+import flash.ui.Keyboard;
 
 import mx.collections.IList;
 import mx.controls.treeClasses.DefaultDataDescriptor;
@@ -8,9 +10,12 @@ import mx.controls.treeClasses.ITreeDataDescriptor2;
 import mx.core.ClassFactory;
 import mx.core.FlexGlobals;
 import mx.core.IVisualElement;
+import mx.core.mx_internal;
 import mx.styles.CSSStyleDeclaration;
 
 import spark.components.List;
+
+use namespace mx_internal;
 
 //--------------------------------------
 //  Events
@@ -391,6 +396,30 @@ public class Tree extends List
 			renderersToRefresh.splice(0, renderersToRefresh.length);
 	}
 	
+	/**
+	 * Handle <code>Keyboard.LEFT</code> and <code>Keyboard.RIGHT</code> as tree
+	 * node collapsing and expanding.
+	 */
+	override protected function adjustSelectionAndCaretUponNavigation(event:KeyboardEvent):void
+	{
+		super.adjustSelectionAndCaretUponNavigation(event);
+		
+		var navigationUnit:uint = mapKeycodeForLayoutDirection(event);
+		if (navigationUnit == Keyboard.LEFT && selectedItem)
+		{
+			var parent:Object = _dataProvider.getItemParent(selectedItem);
+			if (parent)
+			{
+				expandItem(parent, false);
+				selectedItem = parent;
+			}
+		}
+		else if (navigationUnit == Keyboard.RIGHT && selectedItem)
+		{
+			expandItem(selectedItem);
+		}
+	}
+		
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
