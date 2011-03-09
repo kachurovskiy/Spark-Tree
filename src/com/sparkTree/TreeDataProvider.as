@@ -26,7 +26,7 @@ import flash.utils.Dictionary;
 import mx.collections.ICollectionView;
 import mx.collections.IList;
 import mx.collections.IViewCursor;
-import mx.collections.Sort;
+import mx.collections.ISort;
 import mx.controls.treeClasses.ITreeDataDescriptor2;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
@@ -337,12 +337,12 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 	
 	public function set filterFunction(value:Function):void {}
 	
-	public function get sort():Sort
+	public function get sort():ISort
 	{
 		return null;
 	}
 
-	public function set sort(value:Sort):void {}
+	public function set sort(value:ISort):void {}
 	
 	public function createCursor():IViewCursor
 	{
