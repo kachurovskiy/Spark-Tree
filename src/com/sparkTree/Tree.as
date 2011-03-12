@@ -404,17 +404,24 @@ public class Tree extends List
 	{
 		super.adjustSelectionAndCaretUponNavigation(event);
 		
+		if (!selectedItem)
+			return;
+		
 		var navigationUnit:uint = mapKeycodeForLayoutDirection(event);
-		if (navigationUnit == Keyboard.LEFT && selectedItem)
+		if (navigationUnit == Keyboard.LEFT)
 		{
-			var parent:Object = _dataProvider.getItemParent(selectedItem);
-			if (parent)
+			if (_dataProvider.isOpen(selectedItem))
 			{
-				expandItem(parent, false);
-				selectedItem = parent;
+				expandItem(selectedItem, false);
+			}
+			else
+			{
+				var parent:Object = _dataProvider.getItemParent(selectedItem);
+				if (parent)
+					selectedItem = parent;
 			}
 		}
-		else if (navigationUnit == Keyboard.RIGHT && selectedItem)
+		else if (navigationUnit == Keyboard.RIGHT)
 		{
 			expandItem(selectedItem);
 		}
