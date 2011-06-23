@@ -73,7 +73,17 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		
 		resetDataStructures();
 	}
-
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	public var allowIncorrectIndexes:Boolean = false;
+	
+	private var levelOfLastRemovedItem:int = -1;
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Implementation of IList and ICollectionView: properties
@@ -107,11 +117,34 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			return;
 		}
 		
+		if (allowIncorrectIndexes && index > length)
+			index = length;
+		
+		// this code usually executes when item is dropped into tree
+		// choose correct place for drop, see 
+		// https://github.com/kachurovskiy/Spark-Tree/issues/6
 		var previousItem:Object = getItemAt(index - 1);
-		var parent:Object = getItemParent(previousItem);
+		var previousItemLevel:int = getItemLevel(previousItem);
+		var nextItem:Object = index < length ? getItemAt(index) : null;
+		var nextItemLevel:int = nextItem ? getItemLevel(nextItem) : -1;
+		var effectiveItem:Object;
+		var indexDelta:int;
+		if (nextItemLevel != previousItemLevel && nextItem &&
+			levelOfLastRemovedItem == previousItemLevel)
+		{
+			indexDelta = 0;
+			effectiveItem = nextItem;
+		}
+		else
+		{
+			indexDelta = 1;
+			effectiveItem = previousItem;
+		}
+			
+		var parent:Object = getItemParent(effectiveItem);
 		var branch:IList = parent ? IList(dataDescriptor.getChildren(parent)) : _dataProvider;
-		var localIndex:int = branch.getItemIndex(previousItem);
-		branch.addItemAt(item, localIndex + 1);
+		var localIndex:int = branch.getItemIndex(effectiveItem);
+		branch.addItemAt(item, localIndex + indexDelta);
 	}
 	
 	public function getItemAt(index:int, prefetch:int=0):Object
@@ -259,7 +292,10 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			for (var i:int = 0; i < n; i++)
 			{
 				if (branch[i] == item)
+				{
+					levelOfLastRemovedItem = branchLevels[branch];
 					return branch.removeItemAt(i);
+				}
 			}
 		}
 		return null;
@@ -734,10 +770,10 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 	
 	private function branchLocationToGlobalIndex(location:int, branch:IList, branchStartIndex:int):int
 	{
-		if (location == 0)
+		if (location == 0 || branch.length == 0)
 			return branchStartIndex;
 		
-		var previousObject:Object = branch.getItemAt(location - 1);
+		var previousObject:Object = branch.getItemAt(Math.min(location - 1, branch.length - 1));
 		while (parentObjectsToOpenedBranches[previousObject])
 		{
 			var childBranch:IList = parentObjectsToOpenedBranches[previousObject];
@@ -783,6 +819,8 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		// from internal tree structures to avoid memory leaks
 		removeLostBranches(items[0]);
 		
+		refreshLength();
+		
 		// check if we need to close some child object branches that have been updated/removed
 		if (kind == CollectionEventKind.REMOVE || kind == CollectionEventKind.REPLACE)
 		{
@@ -800,12 +838,11 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 				item = propertyEvent.source;
 				var branch:IList = parentObjectsToOpenedBranches[item];
 				// if branch was removed or changed - close it in here
-				if (branch && branch != dataDescriptor.getChildren(item))
+				if (branch && branch != dataDescriptor.getChildren(item) &&
+					parentObjectsToOpenedBranches[item] != dataDescriptor.getChildren(item))
 					closeBranch(branch, item, false);
 			}
 		}
-		
-		refreshLength();
 		
 		dispatchEvent(event);
 	}

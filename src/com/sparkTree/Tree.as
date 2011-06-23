@@ -11,6 +11,7 @@ import mx.core.ClassFactory;
 import mx.core.FlexGlobals;
 import mx.core.IVisualElement;
 import mx.core.mx_internal;
+import mx.events.DragEvent;
 import mx.styles.CSSStyleDeclaration;
 
 import spark.components.List;
@@ -490,6 +491,26 @@ public class Tree extends List
 	{
 		renderersToRefresh.push(renderer);
 		invalidateDisplayList();
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Overriden event handlers
+	//
+	//--------------------------------------------------------------------------
+
+	override protected function dragDropHandler(event:DragEvent):void
+	{
+		// list does not take in account that removing an open node while drag
+		// can cause list to loose more than 1 element. When element is dropped,
+		// to big index can be specified in dataProvider.addItemAt()
+		if (_dataProvider)
+			_dataProvider.allowIncorrectIndexes = true;
+		
+		super.dragDropHandler(event);
+		
+		if (_dataProvider)
+			_dataProvider.allowIncorrectIndexes = false;
 	}
 	
 	//--------------------------------------------------------------------------
