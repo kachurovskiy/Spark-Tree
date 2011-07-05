@@ -27,6 +27,7 @@
 			<!-- Configure the flex framework libraries as external link dependencies -->
 			<external-library-path dir="${FLEX_HOME}/frameworks" append="true">
 				<include name="libs" />
+				<include name="libs/mx" />
 				<include name="locale/{locale}" />
 			</external-library-path>
 			<headless-server>true</headless-server>
