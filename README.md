@@ -1,4 +1,4 @@
-List based Tree component for Flex 4.
+Flex 4 Tree component based on Spark List.
 
 [SparkTree4.0.swc](https://github.com/downloads/kachurovskiy/Spark-Tree/SparkTree4.0.swc) - Flex 4.0, 4.1
 
