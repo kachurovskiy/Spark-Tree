@@ -1,21 +1,15 @@
 package com.sparkTree
 {
 import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
 
 import mx.collections.IList;
 import mx.controls.treeClasses.DefaultDataDescriptor;
 import mx.controls.treeClasses.ITreeDataDescriptor2;
 import mx.core.ClassFactory;
 import mx.core.FlexGlobals;
-import mx.core.IVisualElement;
-import mx.core.mx_internal;
-import mx.events.DragEvent;
 import mx.styles.CSSStyleDeclaration;
 
 import spark.components.DataGrid;
-import spark.components.gridClasses.GridLayout;
 import spark.components.gridClasses.IGridItemRenderer;
 
 //--------------------------------------
@@ -44,18 +38,15 @@ import spark.components.gridClasses.IGridItemRenderer;
 /**
  *  Specifies the icon that is displayed next to a parent item that is open so that its
  *  children are displayed.
- *
- *  The default value is the "TreeDisclosureOpen" symbol in the Assets.swf file.
  */
 [Style(name="disclosureOpenIcon", type="Class", format="EmbeddedFile", inherit="no")]
 
 /**
  *  Specifies the icon that is displayed next to a parent item that is closed so that its
  *  children are not displayed (the subtree is collapsed).
- *
- *  The default value is the "TreeDisclosureClosed" symbol in the Assets.swf file.
  */
 [Style(name="disclosureClosedIcon", type="Class", format="EmbeddedFile", inherit="no")]
+
 /**
  * Indentation for each tree level, in pixels. The default value is 17.
  */
@@ -85,9 +76,12 @@ import spark.components.gridClasses.IGridItemRenderer;
  *  Color of the text when the user selects a row.
  */
 [Style(name="textSelectedColor", type="uint", format="Color", inherit="yes")]
+
 /**
- * Custom Spark Tree that is based on Spark List. Supports most of MX Tree
- * features and does not have it's bugs.
+ * Custom Spark AdvancedDataGrid that is based on Spark DataGrid.
+ * 
+ * <p>Specify <code>DefaultTreeADGItemRenderer</code> as item renderer for column
+ * that should be a tree column.</p>
  */
 public class AdvancedDataGrid extends DataGrid
 {
@@ -128,10 +122,6 @@ public class AdvancedDataGrid extends DataGrid
 	[Embed("../../../assets/defaultLeafIcon.png")]
 	private var defaultLeafIcon:Class;
 	
-	private var refreshRenderersCalled:Boolean = false;
-	
-	private var renderersToRefresh:Vector.<ITreeItemRenderer> = new Vector.<ITreeItemRenderer>();
-	
 	//--------------------------------------------------------------------------
 	//
 	//  Properties
@@ -145,6 +135,11 @@ public class AdvancedDataGrid extends DataGrid
 	private var _dataDescriptor:ITreeDataDescriptor2 = new DefaultDataDescriptor();
 	
 	[Bindable("dataDescriptorChange")]
+	/**
+	 * Data descriptor defines such logic as children field name.
+	 * 
+	 * @default DefaultDataDescriptor
+	 */
 	public function get dataDescriptor():ITreeDataDescriptor2
 	{
 		return _dataDescriptor;
@@ -209,6 +204,13 @@ public class AdvancedDataGrid extends DataGrid
 	private var _iconField:String = "icon";
 	
 	[Bindable("iconFieldChange")]
+	/**
+	 * Name of the field where icon is stored
+	 * 
+	 * @default icon
+	 * 
+	 * @see iconsVisible
+	 */
 	public function get iconField():String
 	{
 		return _iconField;
@@ -308,7 +310,7 @@ public class AdvancedDataGrid extends DataGrid
 	[Bindable("useTextColorsChange")]
 	/**
 	 * MX components use "textRollOverColor" and "textSelectedColor" while Spark
-	 * do not. Set this property to <code>true</code> to use them in tree.
+	 * do not. Set this property to <code>true</code> to use them in grid.
 	 */
 	public function get useTextColors():Boolean
 	{
@@ -399,6 +401,21 @@ public class AdvancedDataGrid extends DataGrid
 		else if (!isOpen && _iconField)
 			icon = item.hasOwnProperty(_iconField) ? item[_iconField] : null;
 		return icon;
+	}
+	
+	public function getTextColor(renderer:IGridItemRenderer):uint
+	{
+		if (!_useTextColors)
+			return getStyle("color");
+		
+		if (!enabled)
+			return getStyle("disabledColor");
+		else if (renderer.selected)
+			return getStyle("textSelectedColor");
+		else if (renderer.hovered)
+			return getStyle("textRollOverColor");
+		else
+			return getStyle("color");
 	}
 	
 	public function refreshRenderers():void

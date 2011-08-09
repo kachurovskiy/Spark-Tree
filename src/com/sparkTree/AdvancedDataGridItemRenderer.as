@@ -26,7 +26,7 @@ public class AdvancedDataGridItemRenderer extends GridItemRenderer implements IT
 	{
 		super();
 		
-		addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+		addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -327,13 +327,15 @@ public class AdvancedDataGridItemRenderer extends GridItemRenderer implements IT
 		if (!dataGrid || !data)
 			return;
 		
-		level = TreeDataProvider(dataGrid.dataProvider).getItemLevel(data);
+		const treeDataProvider:TreeDataProvider = TreeDataProvider(dataGrid.dataProvider);
+		itemIndex = treeDataProvider.getItemIndex(data);
+		level = treeDataProvider.getItemLevel(data);
 		isBranch = true;
 		isLeaf = false;
 		hasChildren = dataGrid.dataDescriptor.hasChildren(data);
-		isOpen = TreeDataProvider(dataGrid.dataProvider).isOpen(data);
+		isOpen = treeDataProvider.isOpen(data);
 		icon = dataGrid.iconsVisible ? dataGrid.getIcon(data) : null;
-		textColor = getTextColor();
+		textColor = dataGrid.getTextColor(this);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -347,24 +349,7 @@ public class AdvancedDataGridItemRenderer extends GridItemRenderer implements IT
 		dataGrid.expandItem(data, !_isOpen);
 	}
 	
-	public function getTextColor():uint
-	{
-		if (!dataGrid)
-			return 0;
-		if (!dataGrid.useTextColors)
-			return getStyle("color");
-		
-		if (!enabled)
-			return getStyle("disabledColor");
-		else if (selected)
-			return getStyle("textSelectedColor");
-		else if (hovered)
-			return getStyle("textRollOverColor");
-		else
-			return getStyle("color");
-	}
-	
-	private function updateChildren():void
+	protected function updateChildren():void
 	{
 		children = data && dataGrid && dataGrid.dataDescriptor ? 
 			dataGrid.dataDescriptor.getChildren(data) : null;
@@ -376,7 +361,7 @@ public class AdvancedDataGridItemRenderer extends GridItemRenderer implements IT
 	//
 	//--------------------------------------------------------------------------
 	
-	private function addedToStage(event:Event):void
+	protected function addedToStageHandler(event:Event):void
 	{
 		var container:DisplayObjectContainer = owner;
 		while (!(container is AdvancedDataGrid) && container)
@@ -388,13 +373,13 @@ public class AdvancedDataGridItemRenderer extends GridItemRenderer implements IT
 		prepare(false);
 	}
 	
-	private function children_collectionChange(event:CollectionEvent):void
+	protected function children_collectionChange(event:CollectionEvent):void
 	{
-		/*if (event.kind != CollectionEventKind.UPDATE)
-			dataGrid.refreshRenderer(this);*/
+		if (event.kind != CollectionEventKind.UPDATE)
+			dataGrid.refreshRenderer(this);
 	}
 	
-	private function data_propertyChangeHandler(event:PropertyChangeEvent):void
+	protected function data_propertyChangeHandler(event:PropertyChangeEvent):void
 	{
 		updateChildren();
 	}
