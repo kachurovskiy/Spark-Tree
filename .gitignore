@@ -1,3 +1,4 @@
-/.flexLibProperties
-/.project
-/bin
+.flexLibProperties
+.actionScriptProperties
+.project
+bin
