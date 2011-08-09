@@ -15,8 +15,8 @@ import mx.events.DragEvent;
 import mx.styles.CSSStyleDeclaration;
 
 import spark.components.DataGrid;
-import spark.components.gridClasses.IGridItemRenderer;
 import spark.components.gridClasses.GridLayout;
+import spark.components.gridClasses.IGridItemRenderer;
 
 //--------------------------------------
 //  Events
@@ -103,6 +103,8 @@ public class AdvancedDataGrid extends DataGrid
 		super();
 		
 		initializeStyles();
+		
+		initializeItemRenderer();
 	}
 	
 	//--------------------------------------------------------------------------
@@ -345,6 +347,11 @@ public class AdvancedDataGrid extends DataGrid
 		setStyle("folderOpenIcon", folderOpenIcon);
 		setStyle("folderClosedIcon", folderClosedIcon);
 		setStyle("defaultLeafIcon", defaultLeafIcon);
+	}
+	
+	protected function initializeItemRenderer():void
+	{
+		itemRenderer = new ClassFactory(DefaultADGItemRenderer);
 	}
 	
 	public function expandItem(item:Object, open:Boolean = true, cancelable:Boolean = true):void
