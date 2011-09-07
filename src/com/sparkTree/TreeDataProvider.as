@@ -41,17 +41,17 @@ import mx.events.PropertyChangeEventKind;
 /**
  *  Dispatched when a branch is closed or collapsed.
  */
-[Event(name="itemClose", type="TreeEvent")]
+[Event(name="itemClose", type="com.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch is opened or expanded.
  */
-[Event(name="itemOpen", type="TreeEvent")]
+[Event(name="itemOpen", type="com.sparkTree.TreeEvent")]
 
 /**
  *  Dispatched when a branch open or close is initiated.
  */
-[Event(name="itemOpening", type="TreeEvent")]
+[Event(name="itemOpening", type="com.sparkTree.TreeEvent")]
 
 /**
  * Special implementation of <code>IList</code> that server as a 
