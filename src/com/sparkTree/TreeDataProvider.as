@@ -640,6 +640,9 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 	 */
 	private function removeBranch(branch:IList, parentObject:Object, branchStartIndex:int = -1):void
 	{
+		if(branch == null)
+			return;
+		
 		branch.removeEventListener(CollectionEvent.COLLECTION_CHANGE,
 			branch_collectionChangeHandler);
 		
