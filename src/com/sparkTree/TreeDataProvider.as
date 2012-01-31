@@ -795,10 +795,11 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 
 	private function branch_collectionChangeHandler(event:CollectionEvent):void
 	{
+		var newEvent:CollectionEvent = event.clone() as CollectionEvent;
 		var parentObject:Object = openedBranchesToParentObjects[event.target];
 		var branchStartIndex:int = parentObject ? getItemIndex(parentObject) + 1 : 0;
-		var kind:String = event.kind;
-		var items:Array = event.items;
+		var kind:String = newEvent.kind;
+		var items:Array = newEvent.items;
 		var item:Object;
 		var n:int = items ? items.length : 0;
 		var i:int;
@@ -809,11 +810,11 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		resetCache();
 		
 		// convert local locations to global 
-		if (event.location != -1)
-			event.location = branchLocationToGlobalIndex(event.location, 
+		if (newEvent.location != -1)
+			newEvent.location = branchLocationToGlobalIndex(newEvent.location, 
 				IList(event.target), branchStartIndex);
-		if (event.oldLocation != -1)
-			event.oldLocation = branchLocationToGlobalIndex(event.oldLocation, 
+		if (newEvent.oldLocation != -1)
+			newEvent.oldLocation = branchLocationToGlobalIndex(newEvent.oldLocation, 
 				IList(event.target), branchStartIndex);
 		
 		// check if some of open branches are now empty and needs to be closed
@@ -831,7 +832,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			// only one item can arrive
 			item = items[0];
 			if (parentObjectsToOpenedBranches[item])
-				removeBranch(parentObjectsToOpenedBranches[item], item, event.location + 1);
+				removeBranch(parentObjectsToOpenedBranches[item], item, newEvent.location + 1);
 		}
 		else if (kind == CollectionEventKind.UPDATE)
 		{
@@ -848,7 +849,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			}
 		}
 		
-		dispatchEvent(event);
+		dispatchEvent(newEvent);
 	}
 	
 }
