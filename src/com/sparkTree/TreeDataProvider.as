@@ -292,7 +292,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			var n:int = branch.length;
 			for (var i:int = 0; i < n; i++)
 			{
-				if (branch[i] == item)
+				if (branch.getItemAt(i) == item)
 				{
 					levelOfLastRemovedItem = branchLevels[branch];
 					return branch.removeItemAt(i);
@@ -510,7 +510,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		var n:int = branch.length;
 		for (var i:int = 0; i < n; i++)
 		{
-			levelsCache[branch[i]] = level;
+			levelsCache[branch.getItemAt(i)] = level;
 		}
 		
 		// clear untrusted area of cache
@@ -601,7 +601,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		var i:int;
 		for (i = 0; i < n; i++)
 		{
-			delete levelsCache[branch[i]];
+			delete levelsCache[branch.getItemAt(i)];
 		}
 		
 		// clear untrusted area of cache
@@ -614,7 +614,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 		{
 			var event:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,
 				false, false, CollectionEventKind.REMOVE, locationBase + i,
-				locationBase + i, [ branch[i] ]);
+				locationBase + i, [ branch.getItemAt(i) ]);
 			dispatchEvent(event);
 		}
 		
@@ -706,7 +706,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			var n:int = branch.length;
 			for (var i:int = 0; i < n; i++)
 			{
-				if (branch[i] == item)
+				if (branch.getItemAt(i) == item)
 				{
 					var level:int = branchLevels[p];
 					levelsCache[item] = level;
@@ -725,7 +725,7 @@ public class TreeDataProvider extends EventDispatcher implements IList, ICollect
 			var n:int = branch.length;
 			for (var i:int = 0; i < n; i++)
 			{
-				if (branch[i] == item)
+				if (branch.getItemAt(i) == item)
 					return openedBranchesToParentObjects[branch];
 			}
 		}
