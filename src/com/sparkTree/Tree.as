@@ -12,6 +12,7 @@ import mx.core.FlexGlobals;
 import mx.core.IVisualElement;
 import mx.core.mx_internal;
 import mx.events.DragEvent;
+import mx.events.FlexEvent;
 import mx.styles.CSSStyleDeclaration;
 
 import spark.components.List;
@@ -102,26 +103,8 @@ public class Tree extends List
 	{
 		super();
 		
-		var mxTreeDeclaration:CSSStyleDeclaration = 
-			FlexGlobals.topLevelApplication.styleManager.getStyleDeclaration("mx.controls.Tree");
-		if (mxTreeDeclaration) // MX Tree may not be used in the application
-		{
-			setStyle("indentation", mxTreeDeclaration.getStyle("indentation"));
-			setStyle("disclosureOpenIcon", mxTreeDeclaration.getStyle("disclosureOpenIcon"));
-			setStyle("disclosureClosedIcon", mxTreeDeclaration.getStyle("disclosureClosedIcon"));
-			setStyle("folderOpenIcon", mxTreeDeclaration.getStyle("folderOpenIcon"));
-			setStyle("folderClosedIcon", mxTreeDeclaration.getStyle("folderClosedIcon"));
-			setStyle("defaultLeafIcon", mxTreeDeclaration.getStyle("defaultLeafIcon"));
-		}
-		else
-		{
-			setStyle("indentation", 17);
-			setStyle("disclosureOpenIcon", disclosureOpenIcon);
-			setStyle("disclosureClosedIcon", disclosureClosedIcon);
-			setStyle("folderOpenIcon", folderOpenIcon);
-			setStyle("folderClosedIcon", folderClosedIcon);
-			setStyle("defaultLeafIcon", defaultLeafIcon);
-		}
+		// Handle styles when getStyle() will return corrent values.
+		addEventListener(FlexEvent.PREINITIALIZE, preinitializeHandler);
 		
 		itemRenderer = new ClassFactory(DefaultTreeItemRenderer);
 	}
@@ -434,6 +417,16 @@ public class Tree extends List
 	//
 	//--------------------------------------------------------------------------
 	
+	/**
+	 * Checks if Spark Tree has it's custom styles defined.
+	 */
+	protected function hasOwnStyles():Boolean
+	{
+		return getStyle("disclosureOpenIcon") || 
+			getStyle("disclosureClosedIcon") || getStyle("folderOpenIcon") ||
+			getStyle("folderClosedIcon") || getStyle("defaultLeafIcon");
+	}
+	
 	public function expandItem(item:Object, open:Boolean = true, cancelable:Boolean = true):void
 	{
 		if (dataDescriptor.hasChildren(item))
@@ -518,7 +511,37 @@ public class Tree extends List
 	//  Event handlers
 	//
 	//--------------------------------------------------------------------------
-
+	
+	protected function preinitializeHandler(event:FlexEvent):void
+	{
+		var mxTreeDeclaration:CSSStyleDeclaration = 
+			FlexGlobals.topLevelApplication.styleManager.getStyleDeclaration("mx.controls.Tree");
+		if (hasOwnStyles() || !mxTreeDeclaration) {
+			// Initialize styles with some defaults to simplify usage.
+			if (!getStyle("indentation"))
+				setStyle("indentation", 17);
+			if (!getStyle("disclosureOpenIcon"))
+				setStyle("disclosureOpenIcon", disclosureOpenIcon);
+			if (!getStyle("disclosureClosedIcon"))
+				setStyle("disclosureClosedIcon", disclosureClosedIcon);
+			if (!getStyle("folderOpenIcon"))
+				setStyle("folderOpenIcon", folderOpenIcon);
+			if (!getStyle("folderClosedIcon"))
+				setStyle("folderClosedIcon", folderClosedIcon);
+			if (!getStyle("defaultLeafIcon"))
+				setStyle("defaultLeafIcon", defaultLeafIcon);
+		} 
+		else if (mxTreeDeclaration) // MX Tree may not be used in the application
+		{
+			setStyle("indentation", mxTreeDeclaration.getStyle("indentation"));
+			setStyle("disclosureOpenIcon", mxTreeDeclaration.getStyle("disclosureOpenIcon"));
+			setStyle("disclosureClosedIcon", mxTreeDeclaration.getStyle("disclosureClosedIcon"));
+			setStyle("folderOpenIcon", mxTreeDeclaration.getStyle("folderOpenIcon"));
+			setStyle("folderClosedIcon", mxTreeDeclaration.getStyle("folderClosedIcon"));
+			setStyle("defaultLeafIcon", mxTreeDeclaration.getStyle("defaultLeafIcon"));
+		}
+	}
+	
 	private function dataProvider_someHandler(event:TreeEvent):void
 	{
 		var clonedEvent:TreeEvent = TreeEvent(event.clone());
