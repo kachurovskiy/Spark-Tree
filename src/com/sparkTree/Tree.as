@@ -363,7 +363,7 @@ public class Tree extends List
 			for (i = 0; i < n; i++)
 			{
 				renderer = dataGroup.getElementAt(i) as ITreeItemRenderer;
-				if (renderer)
+				if (renderer && renderer.data)
 					updateRenderer(renderer, renderer.itemIndex, renderer.data);
 			}
 		}
@@ -373,7 +373,8 @@ public class Tree extends List
 			for (i = 0; i < n; i++)
 			{
 				renderer = renderersToRefresh[i];
-				updateRenderer(renderer, renderer.itemIndex, renderer.data);
+				if (renderer && renderer.data)
+					updateRenderer(renderer, renderer.itemIndex, renderer.data);
 			}
 		}
 		if (renderersToRefresh.length > 0)
